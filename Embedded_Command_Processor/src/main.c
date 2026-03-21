@@ -67,9 +67,9 @@ ring_buffer_push(&rb, 'X');
 ring_buffer_push(&rb, 'Y');
 
 /* Pop remaining */
-while (ring_buffer_pop(&rb, &ch) == 0)
+while (ring_buffer_pop(&rb, &ch) == 0){
     printf("Popped: %c\n", ch);
-
+}
     printf("=== Ring Buffer Test End ===\n");
 }
 

@@ -16,7 +16,7 @@
 
 
     int ring_buffer_push(r_buffer* rb1,char ch){
-        uint8_t next_head
+        uint8_t next_head;
         if (rb1 == NULL || rb1->buffer == NULL)
             return -1;
 
