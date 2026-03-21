@@ -4,44 +4,6 @@
 
 #define MAX_SIZE 20
 
-// void test(r_buffer* t_rb);
-
-// int main(void){
-//     char rx_buffer[MAX_SIZE];
-//     r_buffer r1;
-//     char ch;
-//     int status=0;
-//     if(ring_buffer_init(&r1,rx_buffer,MAX_SIZE)<0){
-//         printf("Null pointer deref error\n");
-//     }
-
-//     while(1){
-
-//             ch=getchar();
-//             if(ring_buffer_push(&r1,ch)==-1){
-//                 printf("buffer is full\n");
-//             }
-//             if(ch=='\n'){
-//                 extract_cmd(&r1);
-//             }
-            
-
-            
-
-//     }
-
-    
-
-    
-
-
-    
-
-    
-
-
-//         return 0;
-//     }
 
 void test_ring_buffer(void)
 {
