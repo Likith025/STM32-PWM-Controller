@@ -1,3 +1,6 @@
+
+#ifndef RING_BUFFER_H_
+#define RING_BUFFER_H_
 #include<stdint.h>
 #include<stdio.h>
 
@@ -14,3 +17,5 @@ typedef struct r_buffer{
 int ring_buffer_init(r_buffer* rb,char* r_buffer,uint8_t max_size);
 int ring_buffer_push(r_buffer* rb,char ch);
 int ring_buffer_pop(r_buffer* rb,char* op_ch);
+
+#endif
