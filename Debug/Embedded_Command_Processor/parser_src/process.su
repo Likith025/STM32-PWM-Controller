@@ -1,0 +1,2 @@
+../Embedded_Command_Processor/parser_src/process.c:4:6:extract_cmd	24	static
+../Embedded_Command_Processor/parser_src/process.c:29:6:process_cmd	32	static
