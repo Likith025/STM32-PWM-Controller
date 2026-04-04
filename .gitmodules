@@ -1,0 +1,3 @@
+[submodule "stm32f7xx_driver"]
+	path = stm32f7xx_driver
+	url = https://github.com/Likith025/STM32F756ZG-Bare-Metal-Driver-Development.git
