@@ -1,4 +1,4 @@
-#include "process.h"
+#include "../parser_inc/process.h"
 
 
 void extract_cmd(r_buffer* rb){
