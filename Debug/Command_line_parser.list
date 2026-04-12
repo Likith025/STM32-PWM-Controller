@@ -35,17 +35,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  15 .debug_rnglists 00000173  00000000  00000000  00005e58  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  000025e9  00000000  00000000  00005fcb  2**0
+ 16 .debug_macro  000025d6  00000000  00000000  00005fcb  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   000034fc  00000000  00000000  000085b4  2**0
+ 17 .debug_line   00003531  00000000  00000000  000085a1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    000093c5  00000000  00000000  0000bab0  2**0
+ 18 .debug_str    0000934f  00000000  00000000  0000bad2  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  00014e75  2**0
+ 19 .comment      00000043  00000000  00000000  00014e21  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000006c8  00000000  00000000  00014eb8  2**2
+ 20 .debug_frame  00000670  00000000  00000000  00014e64  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000049  00000000  00000000  00015580  2**0
+ 21 .debug_line_str 00000049  00000000  00000000  000154d4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -174,7 +174,7 @@ void process_cmd(char* cmd){
  800028a:	b086      	sub	sp, #24
  800028c:	af00      	add	r7, sp, #0
  800028e:	6078      	str	r0, [r7, #4]
-    char* cmd_list[3]={"led on","led off","status"};
+    const char* cmd_list[3]={"led on","led off","status"};
  8000290:	4a2b      	ldr	r2, [pc, #172]	@ (8000340 <process_cmd+0xb8>)
  8000292:	f107 030c 	add.w	r3, r7, #12
  8000296:	ca07      	ldmia	r2, {r0, r1, r2}
@@ -189,8 +189,8 @@ if(strcmp(cmd_list[0],cmd)==0){
  80002a8:	2b00      	cmp	r3, #0
  80002aa:	d10f      	bne.n	80002cc <process_cmd+0x44>
     //printf("led turned on\n");
-	USART_SendData_IT(&g_usart3, (uint8_t*)"led on\n\r", sizeof("led on\n\r"));
- 80002ac:	2209      	movs	r2, #9
+	USART_SendData_IT(&g_usart3, (uint8_t*)"led on\n\r", sizeof("led on\n\r")-1);
+ 80002ac:	2208      	movs	r2, #8
  80002ae:	4925      	ldr	r1, [pc, #148]	@ (8000344 <process_cmd+0xbc>)
  80002b0:	4825      	ldr	r0, [pc, #148]	@ (8000348 <process_cmd+0xc0>)
  80002b2:	f000 fe8d 	bl	8000fd0 <USART_SendData_IT>
@@ -206,7 +206,7 @@ if(strcmp(cmd_list[0],cmd)==0){
  80002c6:	2201      	movs	r2, #1
  80002c8:	701a      	strb	r2, [r3, #0]
 else{
-	USART_SendData_IT(&g_usart3, (uint8_t*)"cmd not found\n\r", sizeof("cmd not found\n\r"));
+	USART_SendData_IT(&g_usart3, (uint8_t*)"cmd not found\n\r", sizeof("cmd not found\n\r")-1);
 
 }
 
@@ -220,8 +220,8 @@ else if(strcmp(cmd_list[1],cmd)==0){
  80002d6:	4603      	mov	r3, r0
  80002d8:	2b00      	cmp	r3, #0
  80002da:	d10f      	bne.n	80002fc <process_cmd+0x74>
-	USART_SendData_IT(&g_usart3, (uint8_t*)"led off\n\r", sizeof("led off\n\r"));
- 80002dc:	220a      	movs	r2, #10
+	USART_SendData_IT(&g_usart3, (uint8_t*)"led off\n\r", sizeof("led off\n\r")-1);
+ 80002dc:	2209      	movs	r2, #9
  80002de:	491d      	ldr	r1, [pc, #116]	@ (8000354 <process_cmd+0xcc>)
  80002e0:	4819      	ldr	r0, [pc, #100]	@ (8000348 <process_cmd+0xc0>)
  80002e2:	f000 fe75 	bl	8000fd0 <USART_SendData_IT>
@@ -251,22 +251,22 @@ else if(strcmp(cmd_list[2],cmd)==0){
  800030e:	781b      	ldrb	r3, [r3, #0]
  8000310:	2b00      	cmp	r3, #0
  8000312:	d005      	beq.n	8000320 <process_cmd+0x98>
-	USART_SendData_IT(&g_usart3, (uint8_t*)"LED:ON\n\r", sizeof("LED:ON\n\r"));
- 8000314:	2209      	movs	r2, #9
+	USART_SendData_IT(&g_usart3, (uint8_t*)"LED:ON\n\r", sizeof("LED:ON\n\r")-1);
+ 8000314:	2208      	movs	r2, #8
  8000316:	4910      	ldr	r1, [pc, #64]	@ (8000358 <process_cmd+0xd0>)
  8000318:	480b      	ldr	r0, [pc, #44]	@ (8000348 <process_cmd+0xc0>)
  800031a:	f000 fe59 	bl	8000fd0 <USART_SendData_IT>
 }
  800031e:	e00a      	b.n	8000336 <process_cmd+0xae>
-		USART_SendData_IT(&g_usart3, (uint8_t*)"LED:OFF\n\r", sizeof("LED:OFF\n\r"));
- 8000320:	220a      	movs	r2, #10
+		USART_SendData_IT(&g_usart3, (uint8_t*)"LED:OFF\n\r", sizeof("LED:OFF\n\r")-1);
+ 8000320:	2209      	movs	r2, #9
  8000322:	490e      	ldr	r1, [pc, #56]	@ (800035c <process_cmd+0xd4>)
  8000324:	4808      	ldr	r0, [pc, #32]	@ (8000348 <process_cmd+0xc0>)
  8000326:	f000 fe53 	bl	8000fd0 <USART_SendData_IT>
 }
  800032a:	e004      	b.n	8000336 <process_cmd+0xae>
-	USART_SendData_IT(&g_usart3, (uint8_t*)"cmd not found\n\r", sizeof("cmd not found\n\r"));
- 800032c:	2210      	movs	r2, #16
+	USART_SendData_IT(&g_usart3, (uint8_t*)"cmd not found\n\r", sizeof("cmd not found\n\r")-1);
+ 800032c:	220f      	movs	r2, #15
  800032e:	490c      	ldr	r1, [pc, #48]	@ (8000360 <process_cmd+0xd8>)
  8000330:	4805      	ldr	r0, [pc, #20]	@ (8000348 <process_cmd+0xc0>)
  8000332:	f000 fe4d 	bl	8000fd0 <USART_SendData_IT>
@@ -2840,18 +2840,18 @@ if(flag_1&&flag_3){
 
 0800130c <__libc_init_array>:
  800130c:	b570      	push	{r4, r5, r6, lr}
- 800130e:	4d0d      	ldr	r5, [pc, #52]	@ (8001344 <__libc_init_array+0x38>)
- 8001310:	4c0d      	ldr	r4, [pc, #52]	@ (8001348 <__libc_init_array+0x3c>)
- 8001312:	1b64      	subs	r4, r4, r5
- 8001314:	10a4      	asrs	r4, r4, #2
+ 800130e:	4b0d      	ldr	r3, [pc, #52]	@ (8001344 <__libc_init_array+0x38>)
+ 8001310:	4d0d      	ldr	r5, [pc, #52]	@ (8001348 <__libc_init_array+0x3c>)
+ 8001312:	1b5b      	subs	r3, r3, r5
+ 8001314:	109c      	asrs	r4, r3, #2
  8001316:	2600      	movs	r6, #0
  8001318:	42a6      	cmp	r6, r4
  800131a:	d109      	bne.n	8001330 <__libc_init_array+0x24>
- 800131c:	4d0b      	ldr	r5, [pc, #44]	@ (800134c <__libc_init_array+0x40>)
- 800131e:	4c0c      	ldr	r4, [pc, #48]	@ (8001350 <__libc_init_array+0x44>)
- 8001320:	f000 f818 	bl	8001354 <_init>
- 8001324:	1b64      	subs	r4, r4, r5
- 8001326:	10a4      	asrs	r4, r4, #2
+ 800131c:	f000 f81a 	bl	8001354 <_init>
+ 8001320:	4d0a      	ldr	r5, [pc, #40]	@ (800134c <__libc_init_array+0x40>)
+ 8001322:	4b0b      	ldr	r3, [pc, #44]	@ (8001350 <__libc_init_array+0x44>)
+ 8001324:	1b5b      	subs	r3, r3, r5
+ 8001326:	109c      	asrs	r4, r3, #2
  8001328:	2600      	movs	r6, #0
  800132a:	42a6      	cmp	r6, r4
  800132c:	d105      	bne.n	800133a <__libc_init_array+0x2e>
