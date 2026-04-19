@@ -28,7 +28,6 @@ void extract_cmd(r_buffer* rb){
 
 void process_cmd(char* cmd)
 {
-	GPIO_WritePin(g_led3.pGPIOx, 14, ENABLE);
 
     static int value = 0;
     static int initialized = 0;
@@ -72,7 +71,6 @@ void process_cmd(char* cmd)
             return;
         }
 
-        // clamp
         if(val > 100){
             USART_SendData_IT(&g_usart3,
                 (uint8_t*)max_limit,
@@ -118,5 +116,4 @@ void process_cmd(char* cmd)
             (uint8_t*)invalid_cmd,
             strlen(invalid_cmd));
     }
-	GPIO_WritePin(g_led3.pGPIOx, 14, DISABLE);
 }
