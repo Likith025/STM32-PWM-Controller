@@ -43,6 +43,13 @@ int main(void)
 	IntrruptConfig(IRQ_NO_USART3, 5, ENABLE);
 	USART_ReadData_IT(&g_usart3, &rx_byte, 1);
 	USART_SendData_IT(&g_usart3, (uint8_t*)"Parser_Started\n\r", sizeof("Parser_Started\n\r"));
+    TimerSetFrequency(&g_timer2, 5000);
+    timer2_setup(&g_timer2, UpCounter);
+    TimerPWM_init(&g_timer2,CH1);
+    timer2ch1(&g_timer2_ch1);
+   TimerControl(&g_timer2, ENABLE);
+
+
 	while(1){
 
 	}

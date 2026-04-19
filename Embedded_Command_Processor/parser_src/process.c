@@ -1,4 +1,5 @@
 #include "../parser_inc/process.h"
+#include <stdlib.h>
 
 
 void extract_cmd(r_buffer* rb){
@@ -10,7 +11,6 @@ void extract_cmd(r_buffer* rb){
 
         if (ch == '\r') {
             cmd_buffer[idx] = '\0';
-            // command complete (print later)
             idx = 0;
             process_cmd(cmd_buffer);
             break;
@@ -19,7 +19,6 @@ void extract_cmd(r_buffer* rb){
         if (idx < CMD_MAX - 1) {
             cmd_buffer[idx++] = ch;
         } else {
-            // overflow: discard command
             idx = 0;
         }
     }
@@ -27,34 +26,50 @@ void extract_cmd(r_buffer* rb){
 }
 
 void process_cmd(char* cmd){
-    char* cmd_list[3]={"led on","led off","status"};
-    static uint8_t led_status=0;
-if(strcmp(cmd_list[0],cmd)==0){
-    //printf("led turned on\n");
-	USART_SendData_IT(&g_usart3, (uint8_t*)"led on\n\r", sizeof("led on\n\r"));
-	GPIO_WritePin(g_led3.pGPIOx, 14, ENABLE);
-	led_status=ENABLE;
-}
-else if(strcmp(cmd_list[1],cmd)==0){
-	USART_SendData_IT(&g_usart3, (uint8_t*)"led off\n\r", sizeof("led off\n\r"));
-	GPIO_WritePin(g_led3.pGPIOx, 14, DISABLE);
-	led_status=DISABLE;
-}
-else if(strcmp(cmd_list[2],cmd)==0){
-	if(led_status){
-	USART_SendData_IT(&g_usart3, (uint8_t*)"LED:ON\n\r", sizeof("LED:ON\n\r"));
-	}
-	else{
-		USART_SendData_IT(&g_usart3, (uint8_t*)"LED:OFF\n\r", sizeof("LED:OFF\n\r"));
-	}
-}
-else{
-	USART_SendData_IT(&g_usart3, (uint8_t*)"cmd not found\n\r", sizeof("cmd not found\n\r"));
 
-}
+	static int value=0;
+    char temp[50];
+    strcpy(temp, cmd);
 
-}
+    char *token = strtok(temp, " ");
+    char *args  = strtok(NULL, " ");
 
+    if(token && strcmp(token, "pwm") == 0){
+        if(args){
+             value = atoi(args);
+             if(value>100){
+                 USART_SendData_IT(&g_usart3,
+                     (uint8_t*)"duty cycle max can be 100\n\r",
+                     strlen("duty cycle max can be 100\n\r"));
+            	 value=100;
+             }
+             if(value<0){
+            	 USART_SendData_IT(&g_usart3,
+            	                      (uint8_t*)"duty cycle min can be 0\n\r",
+            	                      strlen("duty cycle min can be 0\n\r"));
+            	 value=0;
+             }
+
+            char msg[30];
+            sprintf(msg, "PWM:%d%%\n\r", value);
+            USART_SendData_IT(&g_usart3, (uint8_t*)msg, strlen(msg));
+            TimerPWM_DutyCycle(&g_timer2,CH1,value);
+        }
+    }
+    else if(token && strcmp(token, "status") == 0){
+
+        char msg[30];
+
+        sprintf(msg, "PWM status:%d%%\n\r", value);
+
+        USART_SendData_IT(&g_usart3, (uint8_t*)msg, strlen(msg));
+    }
+    else{
+        USART_SendData_IT(&g_usart3,
+            (uint8_t*)"cmd not found\n\r",
+            strlen("cmd not found\n\r"));
+    }
+}
         
 
 

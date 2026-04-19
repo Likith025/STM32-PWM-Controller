@@ -1,7 +1,0 @@
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:21:6:led_setup_blue	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:31:6:led_setup_red	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:41:6:button_setup	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:49:6:button_interrupt_setup	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:61:6:usart3_init	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:79:6:usart3_tx	16	static
-D:/embedded/Command_line_parser/stm32f7xx_driver/bsp/peripheral_config.c:95:6:usart3_rx	16	static

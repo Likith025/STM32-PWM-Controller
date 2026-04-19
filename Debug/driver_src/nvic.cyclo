@@ -1,3 +1,0 @@
-D:/embedded/Command_line_parser/stm32f7xx_driver/stm32f7xx_driver/driver/driver_src/nvic.c:11:6:IntrruptConfig	1
-D:/embedded/Command_line_parser/stm32f7xx_driver/stm32f7xx_driver/driver/driver_src/nvic.c:16:7:IRQ_IntrruptConfig	2
-D:/embedded/Command_line_parser/stm32f7xx_driver/stm32f7xx_driver/driver/driver_src/nvic.c:25:6:IRQ_PriorityConfig	1
