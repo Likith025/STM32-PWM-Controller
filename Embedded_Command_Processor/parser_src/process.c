@@ -2,53 +2,128 @@
  * @file process.c
  * @author Likith025
  * @date April 2026
- * @brief Command Processing Engine for Embedded CLI
+ * @brief Command Processing Engine for Embedded CLI (PWM Control)
  *
  * @details
- * This module implements the command parser and processor for the embedded command-line
- * interface. It extracts commands from the ring buffer, parses them, and executes
- * appropriate GPIO operations.
+ * This module implements the command parser and processor for an embedded
+ * command-line interface (CLI). It extracts commands from a ring buffer,
+ * tokenizes them, validates arguments, and executes PWM-related operations.
  *
- * **Command Set:**
- * - "led on": Turn on LED (GPIO set high)
- * - "led off": Turn off LED (GPIO set low)
- * - "status": Query current LED status (on/off)
- * - "cmd not found": Echo for unrecognized commands
+ * The system is designed for UART-based interaction and uses interrupt-driven
+ * communication for non-blocking command execution.
  *
+ * ---------------------------------------------------------------------------
+ * **Supported Command Set:**
+ *
+ * - pwm <0-100>
+ *     Set PWM duty cycle percentage.
+ *
+ * - status
+ *     Display the current PWM duty cycle.
+ *
+ * - help
+ *     Display list of available commands.
+ *
+ * - (any other input)
+ *     Returns error: "command not found"
+ *
+ * ---------------------------------------------------------------------------
  * **Processing Flow:**
- * ```
+ *
  * 1. UART receives characters → stored in ring buffer
- * 2. extract_cmd() reads from ring buffer until '\r' terminator
- * 3. Command complete (null-terminated string ready)
- * 4. process_cmd() matches command string
- * 5. Execute corresponding GPIO operation
- * 6. Send response via UART
+ * 2. extract_cmd() reads until '\r' (command terminator)
+ * 3. Command is null-terminated
+ * 4. process_cmd():
+ *      - Tokenizes input using strtok()
+ *      - Extracts command and argument
+ *      - Converts argument using strtol()
+ *      - Validates input
+ *      - Executes PWM update or query
+ * 5. Response sent via USART (interrupt-driven TX)
+ *
+ * ---------------------------------------------------------------------------
+ * **Command Format:**
+ *
+ * - ASCII string over UART (USART3)
+ * - Terminated by '\r' (carriage return)
+ * - Space-separated tokens:
+ *      token  → command
+ *      args   → optional argument
+ *
+ * Example:
+ * ```
+ * pwm 50
+ * status
+ * help
  * ```
  *
- * **Command Format:**
- * - Received as ASCII strings over UART/USART3
- * - Terminated with '\r' (carriage return, 0x0D)
- * - Parsed as space-separated command tokens
- * - Case-sensitive matching
- * - Maximum length: CMD_MAX (typically 15 bytes)
+ * ---------------------------------------------------------------------------
+ * **Input Validation:**
  *
+ * - Detects missing arguments
+ * - Rejects invalid numeric input (e.g., "50abc")
+ * - Supports negative values (clamped to 0)
+ * - Limits duty cycle to 0–100%
+ *
+ * ---------------------------------------------------------------------------
+ * **State Management:**
+ *
+ * - Static variable tracks last PWM value
+ * - Initialization flag indicates if PWM has been set
+ * - Ensures meaningful output for "status" command
+ *
+ * ---------------------------------------------------------------------------
+ * **Error Handling:**
+ *
+ * | Condition              | Response                          |
+ * |-----------------------|----------------------------------|
+ * | Missing argument      | "error: missing argument"        |
+ * | Invalid number        | "error: invalid number"          |
+ * | Value > 100           | "error: max value is 100"        |
+ * | Value < 0             | "error: min value is 0"          |
+ * | Unknown command       | "error: command not found"       |
+ *
+ * ---------------------------------------------------------------------------
+ * **Output Examples:**
+ *
+ * ```
+ * > pwm 75
+ * PWM:75%
+ *
+ * > status
+ * PWM:75%
+ *
+ * > help
+ * Available commands:
+ * pwm <0-100>  : set duty cycle
+ * status       : show current PWM
+ * help         : show this message
+ * ```
+ *
+ * ---------------------------------------------------------------------------
  * @note
- * - Commands are stateless (no persistent state between commands)
- * - LED status tracked in static variable within process_cmd()
- * - Response messages sent via USART3 interrupt-driven TX
- * - Non-blocking: commands executed immediately
+ * - Uses interrupt-driven UART transmission (non-blocking)
+ * - Command execution is immediate (no queuing)
+ * - Not re-entrant (uses static variables)
  *
+ * ---------------------------------------------------------------------------
+ * @warning
+ * - Input buffer must be null-terminated
+ * - Maximum command length limited (CMD_MAX / temp buffer size)
+ * - Multiple rapid TX calls may require buffering (future improvement)
+ *
+ * ---------------------------------------------------------------------------
  * @attention
- * - Ring buffer must be pre-initialized with data
- * - USART3 must be configured for TX/RX before use
- * - GPIO for LED must be configured (typically GPIO_B pin 14)
- * - Interrupt handlers must be properly linked
+ * - Ring buffer must be initialized before use
+ * - USART3 must be configured and enabled
+ * - Timer (PWM) must be initialized before issuing commands
+ * - Interrupt handlers must be correctly configured
  *
- * @copyright 2026 Likith025 - MIT License
- * @see ring_buffer.h - Ring buffer data structure
- * @see stm32f7xx_uart_driver.h - UART communication
+ * ---------------------------------------------------------------------------
+ * @see ring_buffer.h
+ * @see stm32f7xx_uart_driver.h
+ * @see stm32f7xx_timer_driver.h
  */
-
 #include "../parser_inc/process.h"
 
 /**
